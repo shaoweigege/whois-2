@@ -43,11 +43,11 @@ func extractTLD(domain string) (tldServ, bool) {
 	return tldServ{}, false
 }
 
-func queryServer(domain, server string, dial whoisDial) (string, error) {
+func queryServer(domain, server string, dial whoisDial) (string, string, error) {
 
 	conn, err := dial("tcp", server+PORT)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	_ = conn.SetDeadline(time.Now().Add(TIMEOUT))
 
@@ -55,40 +55,40 @@ func queryServer(domain, server string, dial whoisDial) (string, error) {
 	fmt.Fprintf(conn, "%s\r\n", domain)
 	b, err := ioutil.ReadAll(conn)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return string(b), nil
+	return server, string(b), nil
 }
 
-func whois(domain string, dial whoisDial) (string, error) {
+func whois(domain string, dial whoisDial) (string, string, error) {
 
 	if tld, ok := extractTLD(domain); ok {
 		return queryServer(domain, tld.server, dial)
 	}
-	return "", fmt.Errorf("No whois server for %s", domain)
+	return "", "", fmt.Errorf("No whois server for %s", domain)
 }
 
 // Whois queries the database of the domain's tld
 // Use the default net.Dial function to contact the whois server
-func Whois(domain string) (string, error) {
+func Whois(domain string) (string, string, error) {
 	return whois(domain, net.Dial)
 }
 
 // Proxied queries the database of the domain's tld via SOCKS5 proxy
 // Uses the proxy.Dialer.Dial function to contact the whois server
 // p can be nil if no authentication is required
-func Proxied(domain, proxyAddr string, p *proxy.Auth) (string, error) {
+func Proxied(domain, proxyAddr string, p *proxy.Auth) (string, string, error) {
 
 	socks, err := proxy.SOCKS5("tcp", proxyAddr, p, proxy.Direct)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	return whois(domain, socks.Dial)
 }
 
 // OwnDialer supply your own dial function
-func OwnDialer(domain string, dialFun whoisDial) (string, error) {
+func OwnDialer(domain string, dialFun whoisDial) (string, string, error) {
 	return whois(domain, dialFun)
 }
 

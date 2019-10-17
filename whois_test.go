@@ -18,7 +18,7 @@ func TestWhois(t *testing.T) {
 	}
 
 	for _, v := range tests {
-		r, err := Whois(v)
+		_, r, err := Whois(v)
 		if err != nil {
 			t.Errorf("Whois(%s):  %s", v, err.Error())
 		}
@@ -54,7 +54,7 @@ func TestProxied(t *testing.T) {
 		t.Log("Authentication variables not set")
 
 		for _, v := range tests {
-			r, err := Proxied(v, addr, nil)
+			_, r, err := Proxied(v, addr, nil)
 			if err != nil {
 				t.Errorf("ProxiedWhois(%s):  %s", v, err.Error())
 			}
@@ -66,7 +66,7 @@ func TestProxied(t *testing.T) {
 	} else {
 		auth := ProxyAuth(user, passwd)
 		for _, v := range tests {
-			r, err := Proxied(v, addr, auth)
+			_, r, err := Proxied(v, addr, auth)
 			if err != nil {
 				t.Errorf("ProxiedWhois(%s):  %s", v, err.Error())
 			}

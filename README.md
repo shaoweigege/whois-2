@@ -18,8 +18,9 @@ import (
   "github.com/flyindoji/whois"
 )
 
-r, e := whois.Whois("verisign.com")
+s, r, e := whois.Whois("verisign.com")
 if e == nil {
+  fmt.Println("Queried:", s)
   fmt.Println(r)
 }
 
@@ -29,7 +30,7 @@ addr := "address:port"
 username := "user"
 passwd := "password"
 
-r, e := whois.Proxied("verisign.com", addr, whois.ProxyAuth(username, passwd))
+_, r, e := whois.Proxied("verisign.com", addr, whois.ProxyAuth(username, passwd))
 if e == nil {
   fmt.Println(r)
 }
@@ -37,7 +38,7 @@ if e == nil {
 // No authentication required
 addr := "address:port"
 
-r, e := whois.Proxied("verisign.com", addr, nil)
+_, r, e := whois.Proxied("verisign.com", addr, nil)
 if e == nil {
   fmt.Println(r)
 }
