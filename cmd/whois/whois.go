@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"whois"
+
+	"github.com/FlyinDoji/whois"
 )
 
 func main() {

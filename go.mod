@@ -1,4 +1,4 @@
-module whois
+module github.com/FlyinDoji/whois
 
 go 1.13
 
